@@ -1,0 +1,4 @@
+.worker.env
+.mosquitto.env
+.env
+venv
