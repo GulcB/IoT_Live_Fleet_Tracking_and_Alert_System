@@ -36,8 +36,8 @@ const MainLayout = () => {
 				component="main"
 				sx={{
 					flexGrow: 1,
-					pt: `${NAVBAR_HEIGHT}px`, // Space for fixed navbar
-					ml: isMobile ? 0 : `${SIDEBAR_WIDTH}px`, // Space for sidebar on desktop
+					pt: `${NAVBAR_HEIGHT}px`,
+					ml: isMobile ? 0 : `${SIDEBAR_WIDTH}px`,
 					minHeight: '100vh',
 					backgroundColor: 'background.default',
 					transition: theme.transitions.create(['margin'], {
