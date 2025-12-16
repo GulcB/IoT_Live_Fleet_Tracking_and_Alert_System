@@ -1,0 +1,111 @@
+{
+	"stats": {
+		"vehicles": {
+			"running": 8,
+			"total": 12
+		},
+		"drivers": {
+			"active": 6,
+			"total": 10
+		},
+		"alerts": {
+			"active": 3,
+			"total": 15
+		},
+		"averageSpeed": 62.5,
+		"totalTraveledTime": "1,245 hrs",
+		"totalTraveledDistance": "48,320 km"
+	},
+	"weeklySchedule": [
+		{
+			"id": "SCH001",
+			"vehiclePlate": "34 ABC 123",
+			"driverName": "Ahmet Y.",
+			"route": "Istanbul - Ankara",
+			"dayOfWeek": 0,
+			"startHour": 8,
+			"endHour": 14,
+			"status": "completed"
+		},
+		{
+			"id": "SCH002",
+			"vehiclePlate": "06 DEF 456",
+			"driverName": "Mehmet K.",
+			"route": "Ankara - Izmir",
+			"dayOfWeek": 0,
+			"startHour": 10,
+			"endHour": 18,
+			"status": "in_transit"
+		},
+		{
+			"id": "SCH003",
+			"vehiclePlate": "35 GHI 789",
+			"driverName": "Ali D.",
+			"route": "Izmir - Antalya",
+			"dayOfWeek": 1,
+			"startHour": 6,
+			"endHour": 12,
+			"status": "scheduled"
+		},
+		{
+			"id": "SCH004",
+			"vehiclePlate": "16 JKL 012",
+			"driverName": "Veli Ç.",
+			"route": "Bursa - Istanbul",
+			"dayOfWeek": 1,
+			"startHour": 14,
+			"endHour": 17,
+			"status": "scheduled"
+		},
+		{
+			"id": "SCH005",
+			"vehiclePlate": "41 MNO 345",
+			"driverName": "Hasan Ö.",
+			"route": "Konya - Ankara",
+			"dayOfWeek": 2,
+			"startHour": 9,
+			"endHour": 13,
+			"status": "scheduled"
+		},
+		{
+			"id": "SCH006",
+			"vehiclePlate": "34 ABC 123",
+			"driverName": "Ahmet Y.",
+			"route": "Ankara - Bursa",
+			"dayOfWeek": 3,
+			"startHour": 7,
+			"endHour": 11,
+			"status": "scheduled"
+		},
+		{
+			"id": "SCH007",
+			"vehiclePlate": "06 DEF 456",
+			"driverName": "Mehmet K.",
+			"route": "Izmir - Istanbul",
+			"dayOfWeek": 4,
+			"startHour": 5,
+			"endHour": 14,
+			"status": "scheduled"
+		},
+		{
+			"id": "SCH008",
+			"vehiclePlate": "35 GHI 789",
+			"driverName": "Ali D.",
+			"route": "Antalya - Konya",
+			"dayOfWeek": 5,
+			"startHour": 8,
+			"endHour": 12,
+			"status": "scheduled"
+		},
+		{
+			"id": "SCH009",
+			"vehiclePlate": "16 JKL 012",
+			"driverName": "Veli Ç.",
+			"route": "Istanbul - Ankara",
+			"dayOfWeek": 6,
+			"startHour": 10,
+			"endHour": 16,
+			"status": "scheduled"
+		}
+	]
+}

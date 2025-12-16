@@ -1,0 +1,62 @@
+{
+	"VH001": [
+		{ "gps": { "lat": 41.0082, "lng": 28.9784 }, "speed": 72, "temperature": 4.2 },
+		{ "gps": { "lat": 41.0095, "lng": 28.9812 }, "speed": 75, "temperature": 4.1 },
+		{ "gps": { "lat": 41.0108, "lng": 28.9840 }, "speed": 78, "temperature": 4.0 },
+		{ "gps": { "lat": 41.0121, "lng": 28.9868 }, "speed": 74, "temperature": 4.1 },
+		{ "gps": { "lat": 41.0134, "lng": 28.9896 }, "speed": 70, "temperature": 4.3 },
+		{ "gps": { "lat": 41.0147, "lng": 28.9924 }, "speed": 68, "temperature": 4.4 },
+		{ "gps": { "lat": 41.0160, "lng": 28.9952 }, "speed": 72, "temperature": 4.2 },
+		{ "gps": { "lat": 41.0173, "lng": 28.9980 }, "speed": 76, "temperature": 4.0 },
+		{ "gps": { "lat": 41.0186, "lng": 29.0008 }, "speed": 80, "temperature": 3.9 },
+		{ "gps": { "lat": 41.0199, "lng": 29.0036 }, "speed": 77, "temperature": 4.0 }
+	],
+	"VH002": [
+		{ "gps": { "lat": 39.9334, "lng": 32.8597 }, "speed": 85, "temperature": 3.8 },
+		{ "gps": { "lat": 39.9298, "lng": 32.8650 }, "speed": 88, "temperature": 3.7 },
+		{ "gps": { "lat": 39.9262, "lng": 32.8703 }, "speed": 90, "temperature": 3.6 },
+		{ "gps": { "lat": 39.9226, "lng": 32.8756 }, "speed": 87, "temperature": 3.7 },
+		{ "gps": { "lat": 39.9190, "lng": 32.8809 }, "speed": 82, "temperature": 3.9 },
+		{ "gps": { "lat": 39.9154, "lng": 32.8862 }, "speed": 78, "temperature": 4.0 },
+		{ "gps": { "lat": 39.9118, "lng": 32.8915 }, "speed": 84, "temperature": 3.8 },
+		{ "gps": { "lat": 39.9082, "lng": 32.8968 }, "speed": 89, "temperature": 3.6 },
+		{ "gps": { "lat": 39.9046, "lng": 32.9021 }, "speed": 92, "temperature": 3.5 },
+		{ "gps": { "lat": 39.9010, "lng": 32.9074 }, "speed": 86, "temperature": 3.7 }
+	],
+	"VH003": [
+		{ "gps": { "lat": 38.4192, "lng": 27.1287 }, "speed": 0, "temperature": 5.1 },
+		{ "gps": { "lat": 38.4192, "lng": 27.1287 }, "speed": 0, "temperature": 5.2 },
+		{ "gps": { "lat": 38.4192, "lng": 27.1287 }, "speed": 0, "temperature": 5.0 },
+		{ "gps": { "lat": 38.4192, "lng": 27.1287 }, "speed": 0, "temperature": 5.1 },
+		{ "gps": { "lat": 38.4192, "lng": 27.1287 }, "speed": 0, "temperature": 5.3 },
+		{ "gps": { "lat": 38.4193, "lng": 27.1288 }, "speed": 5, "temperature": 5.0 },
+		{ "gps": { "lat": 38.4196, "lng": 27.1292 }, "speed": 15, "temperature": 4.8 },
+		{ "gps": { "lat": 38.4202, "lng": 27.1300 }, "speed": 28, "temperature": 4.6 },
+		{ "gps": { "lat": 38.4212, "lng": 27.1315 }, "speed": 45, "temperature": 4.4 },
+		{ "gps": { "lat": 38.4225, "lng": 27.1335 }, "speed": 58, "temperature": 4.2 }
+	],
+	"VH004": [
+		{ "gps": { "lat": 40.1885, "lng": 29.0610 }, "speed": 65, "temperature": 4.5 },
+		{ "gps": { "lat": 40.1898, "lng": 29.0580 }, "speed": 62, "temperature": 4.6 },
+		{ "gps": { "lat": 40.1911, "lng": 29.0550 }, "speed": 58, "temperature": 4.7 },
+		{ "gps": { "lat": 40.1924, "lng": 29.0520 }, "speed": 55, "temperature": 4.8 },
+		{ "gps": { "lat": 40.1937, "lng": 29.0490 }, "speed": 60, "temperature": 4.6 },
+		{ "gps": { "lat": 40.1950, "lng": 29.0460 }, "speed": 68, "temperature": 4.4 },
+		{ "gps": { "lat": 40.1963, "lng": 29.0430 }, "speed": 72, "temperature": 4.3 },
+		{ "gps": { "lat": 40.1976, "lng": 29.0400 }, "speed": 70, "temperature": 4.4 },
+		{ "gps": { "lat": 40.1989, "lng": 29.0370 }, "speed": 66, "temperature": 4.5 },
+		{ "gps": { "lat": 40.2002, "lng": 29.0340 }, "speed": 63, "temperature": 4.6 }
+	],
+	"VH005": [
+		{ "gps": { "lat": 37.8746, "lng": 32.4932 }, "speed": 0, "temperature": 6.0 },
+		{ "gps": { "lat": 37.8746, "lng": 32.4932 }, "speed": 0, "temperature": 6.1 },
+		{ "gps": { "lat": 37.8746, "lng": 32.4932 }, "speed": 0, "temperature": 5.9 },
+		{ "gps": { "lat": 37.8746, "lng": 32.4932 }, "speed": 0, "temperature": 6.0 },
+		{ "gps": { "lat": 37.8746, "lng": 32.4932 }, "speed": 0, "temperature": 6.2 },
+		{ "gps": { "lat": 37.8746, "lng": 32.4932 }, "speed": 0, "temperature": 6.0 },
+		{ "gps": { "lat": 37.8746, "lng": 32.4932 }, "speed": 0, "temperature": 5.8 },
+		{ "gps": { "lat": 37.8746, "lng": 32.4932 }, "speed": 0, "temperature": 6.1 },
+		{ "gps": { "lat": 37.8746, "lng": 32.4932 }, "speed": 0, "temperature": 6.0 },
+		{ "gps": { "lat": 37.8746, "lng": 32.4932 }, "speed": 0, "temperature": 5.9 }
+	]
+}
