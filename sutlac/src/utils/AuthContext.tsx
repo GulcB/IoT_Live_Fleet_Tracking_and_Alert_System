@@ -10,7 +10,9 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-	const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+	// TODO: Set back to false once Keycloak is integrated
+	// For development, everyone is auto-authenticated as admin
+	const [isAuthenticated, setIsAuthenticated] = useState<boolean>(true);
 
 	// For now, everyone is admin once logged in.
 	// In the future, this will come from Keycloak/User profile.
