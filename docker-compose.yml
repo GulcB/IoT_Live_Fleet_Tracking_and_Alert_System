@@ -1,0 +1,51 @@
+volumes:
+  sutlac-db-data:
+    driver: local
+
+  mosquitto-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./mosquitto/data
+
+  mosquitto-logs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./mosquitto/log
+
+networks:
+  sutlac:
+    driver: bridge
+
+
+services:
+  sutlac-mosquitto:
+    image: eclipse-mosquitto:2.0
+    container_name: sutlac-mosquitto
+    volumes:
+      - ./mosquitto/config/mosquitto.conf:/mosquitto/config/mosquitto.conf
+      - mosquitto-data:/mosquitto/data
+      - mosquitto-logs:/mosquitto/log
+    ports:
+      - "1883:1883"
+    networks:
+      - sutlac
+
+  worker:
+    container_name: workers-mqtt
+    build:
+      context: ./mqtt-worker
+      dockerfile: dockerfile
+    networks:
+      - sutlac
+    ports:
+      - "8000:8000"
+    restart: always
+    depends_on:
+      - sutlac-mosquitto
+    environment:
+    - PYTHONUNBUFFERED=1
+    - PYTHONDONTWRITEBYTECODE=1
