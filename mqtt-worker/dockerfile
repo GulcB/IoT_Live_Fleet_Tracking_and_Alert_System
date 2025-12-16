@@ -1,0 +1,16 @@
+FROM python:3.11-slim
+
+ENV PYTHONUNBUFFERED 1
+ENV PYTHONDONTWRITEBYTECODE 1
+
+WORKDIR /worker/
+
+RUN apt-get upgrade -y
+RUN pip install --upgrade pip
+
+COPY . .
+
+RUN pip install --no-cache-dir -r ./requiments.txt
+RUN chmod +x ./requiments.txt
+
+CMD ["python", "-u", "telemetry.py"]
