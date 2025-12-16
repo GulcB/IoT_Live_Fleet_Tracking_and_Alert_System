@@ -5,3 +5,5 @@
 venv
 /mosquitto/data
 /mosquitto/log
+denemeworker.py
+__pycache__
