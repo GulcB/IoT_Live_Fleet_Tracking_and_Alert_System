@@ -38,6 +38,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'channels',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -45,8 +46,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'channels',
     'rest_framework',
+    'fleet_tracking',
 ]
 
 MIDDLEWARE = [
@@ -78,7 +79,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'djangoBackend.wsgi.application'
-
+ASGI_APPLICATION = "djangoBackend.asgi.application"
 
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
@@ -94,12 +95,13 @@ DATABASES = {
     }
 }
 
+REDIS_HOST = os.getenv("REDIS_HOST", "sutlac-redis")
+REDIS_PORT = int(os.getenv("REDIS_PORT", "6379"))
+
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
-        "CONFIG": {
-            "hosts": [("sutlac-redis", 6379)],
-        },
+         "CONFIG": {"hosts": [(REDIS_HOST, REDIS_PORT)]},
     },
 }
 
