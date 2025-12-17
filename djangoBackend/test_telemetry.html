@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telemetry WebSocket Test</title>
+</head>
+<body>
+    <h1>Telemetry WebSocket Test for VEH-0001</h1>
+    <div id="messages"></div>
+    <script>
+        const ws = new WebSocket("ws://localhost:8000/ws/telemetry/VEH-0001/");
+        const messagesDiv = document.getElementById('messages');
+
+        ws.onopen = () => {
+            messagesDiv.innerHTML += "CLIENT OPEN<br>";
+            console.log("CLIENT OPEN");
+        };
+        ws.onmessage = (e) => {
+            messagesDiv.innerHTML += "CLIENT MESSAGE: " + e.data + "<br>";
+            console.log("CLIENT MESSAGE", e.data);
+        };
+        ws.onerror = (e) => {
+            messagesDiv.innerHTML += "CLIENT ERROR: " + e + "<br>";
+            console.log("CLIENT ERROR", e);
+        };
+        ws.onclose = (e) => {
+            messagesDiv.innerHTML += "CLIENT CLOSE: " + e.code + "<br>";
+            console.log("CLIENT CLOSE", e.code);
+        };
+    </script>
+</body>
+</html></content>
+<parameter name="filePath">/home/huseyinalpaslanozdemir/IoT_Live_Fleet_Tracking_and_Alert_System/djangoBackend/test_telemetry.html
