@@ -87,7 +87,6 @@ services:
 
   redis-bridge:
     container_name: redis-bridge
-    entrypoint: ./config/start.sh
     build: ./djangoBackend
     command: python manage.py redis_bridge
     environment:
