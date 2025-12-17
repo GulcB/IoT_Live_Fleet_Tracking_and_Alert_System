@@ -1,0 +1,9 @@
+/* Global app styles - cleaned up for dashboard layout */
+* {
+  box-sizing: border-box;
+}
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+}

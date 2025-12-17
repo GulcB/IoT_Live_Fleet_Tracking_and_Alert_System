@@ -1,0 +1,103 @@
+/* Chat Widget Styles */
+
+/* Pulse Animation for FAB */
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(13, 71, 161, 0.7);
+  }
+
+  70% {
+    box-shadow: 0 0 0 10px rgba(13, 71, 161, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(13, 71, 161, 0);
+  }
+}
+
+.chat-fab-pulse {
+  animation: pulse 2s infinite;
+}
+
+/* Slide Up Animation for Chat Window */
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.chat-window-slide {
+  animation: slideUp 0.3s ease-out;
+}
+
+/* Message Bubble Styles */
+.message-bubble {
+  padding: 8px 12px;
+  border-radius: 12px;
+  max-width: 70%;
+  word-wrap: break-word;
+  margin-bottom: 8px;
+}
+
+.message-bubble-sent {
+  background: #0D47A1;
+  color: white;
+  margin-left: auto;
+  border-bottom-right-radius: 4px;
+}
+
+.message-bubble-received {
+  background: #f1f3f5;
+  color: #212529;
+  margin-right: auto;
+  border-bottom-left-radius: 4px;
+}
+
+.message-sender {
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+  opacity: 0.8;
+}
+
+.message-text {
+  font-size: 0.875rem;
+  line-height: 1.4;
+}
+
+.message-timestamp {
+  font-size: 0.65rem;
+  margin-top: 4px;
+  opacity: 0.6;
+}
+
+/* Custom Scrollbar */
+.chat-messages-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chat-messages-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.chat-messages-container::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 10px;
+}
+
+.chat-messages-container::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Message List Container */
+.chat-messages-container {
+  scrollbar-width: thin;
+  scrollbar-color: #888 #f1f1f1;
+}

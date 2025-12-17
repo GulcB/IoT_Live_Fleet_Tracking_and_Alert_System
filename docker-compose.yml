@@ -140,3 +140,45 @@ services:
     restart: always
     env_file:
       - .env
+
+  nginx:
+    image: nginx:latest
+    container_name: sutlac-nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    networks:
+      - sutlac
+    depends_on:
+      - django-backend
+      - sutlac-frontend
+    restart: always
+
+  sutlac-frontend:
+    build:
+      context: ./sutlac
+      dockerfile: Dockerfile
+    container_name: sutlac-frontend
+    command: npm run dev -- --host 0.0.0.0 --port 5173
+    ports:
+      - "5173:5173"
+    env_file:
+      - .env
+    environment:
+      VITE_FIREBASE_API_KEY: ${VITE_FIREBASE_API_KEY}
+      VITE_FIREBASE_AUTH_DOMAIN: ${VITE_FIREBASE_AUTH_DOMAIN}
+      VITE_FIREBASE_DATABASE_URL: ${VITE_FIREBASE_DATABASE_URL}
+      VITE_FIREBASE_PROJECT_ID: ${VITE_FIREBASE_PROJECT_ID}
+      VITE_FIREBASE_STORAGE_BUCKET: ${VITE_FIREBASE_STORAGE_BUCKET}
+      VITE_FIREBASE_MESSAGING_SENDER_ID: ${VITE_FIREBASE_MESSAGING_SENDER_ID}
+      VITE_FIREBASE_APP_ID: ${VITE_FIREBASE_APP_ID}
+      VITE_FIREBASE_MEASUREMENT_ID: ${VITE_FIREBASE_MEASUREMENT_ID}
+    volumes:
+      - ./sutlac:/app
+      - /app/node_modules
+    networks:
+      - sutlac
+    depends_on:
+      - django-backend
+    restart: unless-stopped
