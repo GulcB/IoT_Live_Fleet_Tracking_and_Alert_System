@@ -7,3 +7,7 @@ venv
 /mosquitto/log
 denemeworker.py
 __pycache__
+node_modules
+dist
+.git
+.vscode
