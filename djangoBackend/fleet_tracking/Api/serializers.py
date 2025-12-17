@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from ..models import Fleet, Geofence
+from ..models import Fleet, Geofence, GeofenceViolation
 from django.contrib.gis.geos import Polygon
 
 class FeelSerializer(serializers.ModelSerializer):
@@ -76,4 +76,9 @@ class GeofenceSerializer(serializers.ModelSerializer):
             rep["polygon"] = None
 
         return rep
+    
 
+class GeofenceViolationSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = GeofenceViolation
+        fields = '__all__'
