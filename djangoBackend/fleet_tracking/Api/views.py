@@ -1,6 +1,6 @@
 from rest_framework import generics
-from ..models import Fleet
-from .serializers import FeelSerializers
+from ..models import Fleet, Geofence
+from .serializers import FeelSerializers, GeofenceSerializer
 from django.shortcuts import get_object_or_404
 
 class FeelAdd(generics.CreateAPIView):
@@ -15,7 +15,11 @@ class FeelList(generics.ListAPIView):
 class FeelDetail(generics.RetrieveUpdateDestroyAPIView):
 	queryset = Fleet.objects.all()
 	serializer_class = FeelSerializers
+	
+class GeofenceListCreateView(generics.ListCreateAPIView):
+    queryset = Geofence.objects.all()
+    serializer_class = GeofenceSerializer
 
-	def get_object(self):
-		pk = self.kwargs['pk']
-		return get_object_or_404(Fleet, pk=pk)
+class GeofenceDetailView(generics.RetrieveUpdateDestroyAPIView):
+    queryset = Geofence.objects.all()
+    serializer_class = GeofenceSerializer
