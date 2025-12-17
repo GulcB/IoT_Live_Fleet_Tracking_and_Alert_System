@@ -5,7 +5,7 @@ import paho.mqtt.client as mqtt
 
 WORKER_HOST = os.getenv("MQTT_HOST", "sutlac-mosquitto")
 WORKER_PORT = int(os.getenv("MQTT_PORT", "1883"))
-SUB_TOPIC = "fleet/TR34/vehicle/VEH-0001/telemetry"
+SUB_TOPIC = "fleet/TR34/vehicle/+/telemetry"
 REDIS_HOST = os.getenv("REDIS_HOST", "sutlac-redis")
 REDIS_PORT = int(os.getenv("REDIS_PORT", "6379"))
 REDIS_DB   = int(os.getenv("REDIS_DB", "0"))
@@ -21,7 +21,6 @@ def publish_telemetry(payload: dict):
     """
     vehicle_id = payload.get("vehicle_id", "unknown")
     msg = json.dumps(payload, ensure_ascii=False)
-    r.publish("fleet.telemetry", msg)
     r.publish(f"fleet.telemetry.{vehicle_id}", msg)
 
 def on_connect(client, userdata, flags, rc):
