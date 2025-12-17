@@ -1,20 +1,20 @@
 from rest_framework import generics
 from ..models import Fleet, Geofence, GeofenceViolation
-from .serializers import FeelSerializers, GeofenceSerializer, GeofenceViolationSerializers
+from .serializers import FeelSerializer, GeofenceSerializer, GeofenceViolationSerializers
 from django.shortcuts import get_object_or_404
 
 class FeelAdd(generics.CreateAPIView):
 	queryset = Fleet.objects.all()
-	serializer_class = FeelSerializers
+	serializer_class = FeelSerializer
 	
 
 class FeelList(generics.ListAPIView):
 	queryset = Fleet.objects.all()
-	serializer_class = FeelSerializers
+	serializer_class = FeelSerializer
 	
 class FeelDetail(generics.RetrieveUpdateDestroyAPIView):
 	queryset = Fleet.objects.all()
-	serializer_class = FeelSerializers
+	serializer_class = FeelSerializer
 	
 class GeofenceListCreateView(generics.ListCreateAPIView):
     queryset = Geofence.objects.all()

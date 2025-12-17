@@ -1,5 +1,4 @@
 from django.db import models
-from django.contrib.gis.db import models as gis_models
 
 class TypeCar(models.TextChoices):
 	TRUCK = "TRUCK", "TRUCK"
@@ -22,15 +21,15 @@ class Fleet(models.Model):
 	brand = models.CharField(max_length=20, blank=False)
 	model = models.CharField(max_length=20, blank=False)
 	year = models.IntegerField(blank=True)
-	vehicle_type = models.Charfield(max_length=5, choices=TypeCar.choices, default=TypeCar.CAR)
+	vehicle_type = models.CharField(max_length=5, choices=TypeCar.choices, default=TypeCar.CAR)
 	created_at = models.DateField(auto_now_add=True)
 	updated_at = models.DateTimeField(auto_now=True)
 
 class Geofence(models.Model):
 	name = models.CharField(max_length=100, blank=False)
 	description = models.CharField(max_length=100, blank=True, null=True)
-	polygon = gis_models.PolygonField(srid=4326, null=True, blank=True)
-	type = models.Charfield(max_length=10, choices=GeoType.choices, default=GeoType.RESTRICTED)
+	geometry = models.JSONField()
+	type = models.CharField(max_length=10, choices=GeoType.choices, default=GeoType.RESTRICTED)
 	vehicle = models.ForeignKey(
         "fleet_tracking.Fleet",
         on_delete=models.CASCADE,
@@ -41,6 +40,9 @@ class Geofence(models.Model):
 	is_active = models.BooleanField(default=True)
 	created_at = models.DateTimeField(auto_now_add=True)
 	updated_at = models.DateTimeField(auto_now=True)
+
+	def __str__(self):
+		return f"{self.name} ({self.type})"
 
 class GeofenceViolation(models.Model):
 	vehicle = models.ForeignKey(
