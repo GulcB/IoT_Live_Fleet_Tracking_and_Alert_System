@@ -1,17 +1,10 @@
 import { useState, useEffect, useCallback } from "react";
-import {
-  Box,
-  Typography,
-  Button,
-  Pagination,
-  InputBase,
-} from "@mui/material";
+import { Box, Typography, Button, InputBase } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import SearchIcon from "@mui/icons-material/Search";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
-import SpeedIcon from "@mui/icons-material/Speed";
-import PauseCircleOutlineIcon from "@mui/icons-material/PauseCircleOutline";
-import WarningAmberIcon from "@mui/icons-material/WarningAmber";
+import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
+import DirectionsBusIcon from "@mui/icons-material/DirectionsBus";
 import { StatCard } from "../../components/dashboard/StatCard";
 import VehicleFilters, {
   type FilterTab,
@@ -23,12 +16,8 @@ import { vehicleApi } from "../../services/vehicleApi";
 import { useNotification } from "../../utils/NotificationContext";
 import type { Vehicle } from "../../types/vehicle";
 
-const PAGE_SIZE = 5;
-
 const Vehicles = () => {
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
-  const [totalVehicles, setTotalVehicles] = useState(0);
-  const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [activeFilter, setActiveFilter] = useState<FilterTab>("all");
   const [searchQuery, setSearchQuery] = useState("");
@@ -42,15 +31,15 @@ const Vehicles = () => {
   const fetchVehicles = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await vehicleApi.getVehicles(page, PAGE_SIZE);
-      setVehicles(response.vehicles);
-      setTotalVehicles(response.total);
+      const data = await vehicleApi.getVehicles();
+      setVehicles(data);
     } catch (error) {
       console.error("Failed to fetch vehicles:", error);
+      showNotification("Failed to fetch vehicles", "error");
     } finally {
       setLoading(false);
     }
-  }, [page]);
+  }, [showNotification]);
 
   useEffect(() => {
     fetchVehicles();
@@ -68,30 +57,27 @@ const Vehicles = () => {
       if (!matchesSearch) return false;
     }
 
-    // Status filter
+    // Type filter
     if (activeFilter === "all") return true;
-    if (activeFilter === "with_alarms")
-      return vehicle.active_alarms && vehicle.active_alarms > 0;
-    return vehicle.status === activeFilter;
+    return vehicle.vehicle_type === activeFilter;
   });
 
-  // Calculate stats
+  // Calculate stats by vehicle type
   const stats = {
-    total: totalVehicles,
-    active: vehicles.filter((v) => v.status === "moving").length,
-    idle: vehicles.filter((v) => v.status === "idle").length,
-    alarms: vehicles.reduce((acc, v) => acc + (v.active_alarms || 0), 0),
+    total: vehicles.length,
+    cars: vehicles.filter((v) => v.vehicle_type === "CAR").length,
+    trucks: vehicles.filter((v) => v.vehicle_type === "TRUCK").length,
+    buses: vehicles.filter((v) => v.vehicle_type === "BUS").length,
+    vans: vehicles.filter((v) => v.vehicle_type === "VAN").length,
   };
-
-  const totalPages = Math.ceil(totalVehicles / PAGE_SIZE);
 
   const handleEdit = (vehicle: Vehicle) => {
     setEditVehicle(vehicle);
     setModalOpen(true);
   };
 
-  const handleDelete = (vehicleId: string) => {
-    const vehicle = vehicles.find((v) => v.id === vehicleId);
+  const handleDelete = (vehiclePlate: string) => {
+    const vehicle = vehicles.find((v) => v.vehicle_plate === vehiclePlate);
     if (vehicle) {
       setVehicleToDelete(vehicle);
       setDeleteDialogOpen(true);
@@ -103,8 +89,12 @@ const Vehicles = () => {
 
     setDeleteLoading(true);
     try {
-      await vehicleApi.deleteVehicle(vehicleToDelete.id);
-      showNotification(`Vehicle ${vehicleToDelete.vehicle_plate} deleted successfully!`, "success");
+      // Use vehicle_plate for delete since API may not have id
+      await vehicleApi.deleteVehicle(vehicleToDelete.vehicle_plate);
+      showNotification(
+        `Vehicle ${vehicleToDelete.vehicle_plate} deleted successfully!`,
+        "success"
+      );
       setDeleteDialogOpen(false);
       setVehicleToDelete(null);
       fetchVehicles();
@@ -149,7 +139,7 @@ const Vehicles = () => {
               color: "#64748b",
             }}
           >
-            {totalVehicles} Total
+            {vehicles.length} Total
           </Typography>
         </Box>
       </Box>
@@ -171,29 +161,24 @@ const Vehicles = () => {
           value={stats.total}
           icon={<LocalShippingIcon sx={{ color: "#3b82f6" }} />}
           iconBgColor="#eff6ff"
-          trend={{ value: "+2%", direction: "up", label: "vs last month" }}
         />
         <StatCard
-          title="Active Now"
-          value={stats.active}
-          icon={<SpeedIcon sx={{ color: "#10b981" }} />}
-          iconBgColor="#ecfdf5"
-          trend={{ value: "+12%", direction: "up", label: "current usage" }}
+          title="Cars"
+          value={stats.cars}
+          icon={<DirectionsCarIcon sx={{ color: "#3b82f6" }} />}
+          iconBgColor="#eff6ff"
         />
         <StatCard
-          title="Idle Vehicles"
-          value={stats.idle}
-          icon={<PauseCircleOutlineIcon sx={{ color: "#64748b" }} />}
-          iconBgColor="#f1f5f9"
-          trend={{ value: "-5%", direction: "down", label: "efficiency drop" }}
+          title="Trucks"
+          value={stats.trucks}
+          icon={<LocalShippingIcon sx={{ color: "#8b5cf6" }} />}
+          iconBgColor="#f5f3ff"
         />
         <StatCard
-          title="Active Alarms"
-          value={stats.alarms}
-          subtitle="Attention needed"
-          subtitleColor="error"
-          icon={<WarningAmberIcon sx={{ color: "#f59e0b" }} />}
-          iconBgColor="#fffbeb"
+          title="Buses & Vans"
+          value={stats.buses + stats.vans}
+          icon={<DirectionsBusIcon sx={{ color: "#f97316" }} />}
+          iconBgColor="#fff7ed"
         />
       </Box>
 
@@ -214,7 +199,7 @@ const Vehicles = () => {
         >
           <SearchIcon sx={{ color: "#94a3b8", mr: 1 }} />
           <InputBase
-            placeholder="Search by Plate, ID, or Driver..."
+            placeholder="Search by Plate, Brand, or Model..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             sx={{
@@ -248,7 +233,6 @@ const Vehicles = () => {
       <VehicleFilters
         activeFilter={activeFilter}
         onFilterChange={setActiveFilter}
-        alarmCount={stats.alarms}
       />
 
       {/* Table */}
@@ -261,35 +245,6 @@ const Vehicles = () => {
           onDelete={handleDelete}
         />
       )}
-
-      {/* Pagination */}
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          mt: 2,
-        }}
-      >
-        <Typography variant="body2" color="text.secondary">
-          Showing {Math.min((page - 1) * PAGE_SIZE + 1, totalVehicles)}-
-          {Math.min(page * PAGE_SIZE, totalVehicles)} of {totalVehicles}
-        </Typography>
-        <Pagination
-          count={totalPages}
-          page={page}
-          onChange={(_, value) => setPage(value)}
-          shape="rounded"
-          sx={{
-            "& .MuiPaginationItem-root": {
-              "&.Mui-selected": {
-                backgroundColor: "#3b82f6",
-                color: "white",
-              },
-            },
-          }}
-        />
-      </Box>
 
       {/* Add/Edit Vehicle Modal */}
       <AddVehicleModal

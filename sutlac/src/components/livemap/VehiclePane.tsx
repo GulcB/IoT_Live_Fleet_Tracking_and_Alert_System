@@ -8,7 +8,7 @@ import {
   Typography,
   Chip,
 } from "@mui/material";
-import type { Vehicle } from "../../types/vehicle";
+import type { Vehicle, VehicleType } from "../../types/vehicle";
 
 // Design tokens (consistent across all components)
 const COLORS = {
@@ -17,9 +17,10 @@ const COLORS = {
   textPrimary: "#1e293b",
   textSecondary: "#64748b",
   selectedBg: "#eff6ff",
-  statusActive: "#22c55e",
-  statusIdle: "#f97316",
-  statusMaintenance: "#ef4444",
+  typeCar: "#3b82f6",
+  typeTruck: "#8b5cf6",
+  typeBus: "#f97316",
+  typeVan: "#22c55e",
 };
 
 const CARD_STYLES = {
@@ -30,25 +31,30 @@ const CARD_STYLES = {
 
 interface VehiclePaneProps {
   vehicles: Vehicle[];
-  selectedId: string | null;
-  onSelect: (id: string) => void;
+  selectedPlate: string | null;
+  onSelect: (plate: string) => void;
 }
 
-const getStatusColor = (status: Vehicle["status"]) => {
-  switch (status) {
-    case "moving":
-      return COLORS.statusActive;
-    case "idle":
-      return COLORS.statusIdle;
-    case "stopped":
-    case "in_garage":
-      return COLORS.statusMaintenance;
+const getVehicleTypeColor = (type: VehicleType) => {
+  switch (type) {
+    case "CAR":
+      return COLORS.typeCar;
+    case "TRUCK":
+      return COLORS.typeTruck;
+    case "BUS":
+      return COLORS.typeBus;
+    case "VAN":
+      return COLORS.typeVan;
     default:
       return COLORS.textSecondary;
   }
 };
 
-const VehiclePane = ({ vehicles, selectedId, onSelect }: VehiclePaneProps) => {
+const VehiclePane = ({
+  vehicles,
+  selectedPlate,
+  onSelect,
+}: VehiclePaneProps) => {
   return (
     <Paper
       sx={{
@@ -81,10 +87,10 @@ const VehiclePane = ({ vehicles, selectedId, onSelect }: VehiclePaneProps) => {
       {/* Vehicle List */}
       <List sx={{ flex: 1, overflow: "auto", p: 1 }}>
         {vehicles.map((vehicle) => (
-          <ListItem key={vehicle.id} disablePadding sx={{ mb: 0.5 }}>
+          <ListItem key={vehicle.vehicle_plate} disablePadding sx={{ mb: 0.5 }}>
             <ListItemButton
-              selected={selectedId === vehicle.id}
-              onClick={() => onSelect(vehicle.id)}
+              selected={selectedPlate === vehicle.vehicle_plate}
+              onClick={() => onSelect(vehicle.vehicle_plate)}
               sx={{
                 borderRadius: "12px",
                 "&.Mui-selected": {
@@ -96,7 +102,7 @@ const VehiclePane = ({ vehicles, selectedId, onSelect }: VehiclePaneProps) => {
             >
               <ListItemText
                 primary={vehicle.vehicle_plate}
-                secondary={`${vehicle.model} • ${vehicle.driver_name || "No driver"}`}
+                secondary={`${vehicle.brand} ${vehicle.model} (${vehicle.year})`}
                 primaryTypographyProps={{
                   fontWeight: 600,
                   fontSize: 14,
@@ -108,15 +114,14 @@ const VehiclePane = ({ vehicles, selectedId, onSelect }: VehiclePaneProps) => {
                 }}
               />
               <Chip
-                label={vehicle.status}
+                label={vehicle.vehicle_type}
                 size="small"
                 sx={{
-                  backgroundColor: getStatusColor(vehicle.status),
+                  backgroundColor: getVehicleTypeColor(vehicle.vehicle_type),
                   color: "white",
                   fontSize: 10,
                   height: 22,
                   fontWeight: 500,
-                  textTransform: "capitalize",
                 }}
               />
             </ListItemButton>

@@ -1,26 +1,24 @@
 import { Box, Tabs, Tab } from "@mui/material";
-import type { VehicleStatus } from "../../types/vehicle";
+import type { VehicleType } from "../../types/vehicle";
 
-type FilterTab = "all" | VehicleStatus | "with_alarms";
+type FilterTab = "all" | VehicleType;
 
 interface VehicleFiltersProps {
   activeFilter: FilterTab;
   onFilterChange: (filter: FilterTab) => void;
-  alarmCount?: number;
 }
 
 const FILTER_TABS: { value: FilterTab; label: string }[] = [
   { value: "all", label: "All Vehicles" },
-  { value: "moving", label: "Moving" },
-  { value: "idle", label: "Idle" },
-  { value: "in_garage", label: "In Garage" },
-  { value: "with_alarms", label: "With Alarms" },
+  { value: "CAR", label: "Cars" },
+  { value: "TRUCK", label: "Trucks" },
+  { value: "BUS", label: "Buses" },
+  { value: "VAN", label: "Vans" },
 ];
 
 const VehicleFilters = ({
   activeFilter,
   onFilterChange,
-  alarmCount = 0,
 }: VehicleFiltersProps) => {
   return (
     <Box
@@ -55,28 +53,7 @@ const VehicleFilters = ({
         }}
       >
         {FILTER_TABS.map((tab) => (
-          <Tab
-            key={tab.value}
-            value={tab.value}
-            label={
-              tab.value === "with_alarms" ? (
-                <Box sx={{ display: "flex", alignItems: "center", gap: 0.5 }}>
-                  <Box
-                    sx={{
-                      width: 6,
-                      height: 6,
-                      borderRadius: "50%",
-                      backgroundColor: "#ef4444",
-                    }}
-                  />
-                  {tab.label}
-                  {alarmCount > 0 && ` (${alarmCount})`}
-                </Box>
-              ) : (
-                tab.label
-              )
-            }
-          />
+          <Tab key={tab.value} value={tab.value} label={tab.label} />
         ))}
       </Tabs>
     </Box>

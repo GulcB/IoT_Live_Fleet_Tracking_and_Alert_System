@@ -42,17 +42,22 @@ const INITIAL_FORM: VehicleCreate = {
   vehicle_type: "CAR",
 };
 
-const AddVehicleModal = ({ open, onClose, onSuccess, vehicle }: AddVehicleModalProps) => {
+const AddVehicleModal = ({
+  open,
+  onClose,
+  onSuccess,
+  vehicle,
+}: AddVehicleModalProps) => {
   const isEditMode = !!vehicle;
   const [formData, setFormData] = useState<VehicleCreate>(
     vehicle
       ? {
-        vehicle_plate: vehicle.vehicle_plate,
-        brand: vehicle.brand,
-        model: vehicle.model,
-        year: vehicle.year,
-        vehicle_type: vehicle.vehicle_type,
-      }
+          vehicle_plate: vehicle.vehicle_plate,
+          brand: vehicle.brand,
+          model: vehicle.model,
+          year: vehicle.year,
+          vehicle_type: vehicle.vehicle_type,
+        }
       : INITIAL_FORM
   );
   const [loading, setLoading] = useState(false);
@@ -100,7 +105,7 @@ const AddVehicleModal = ({ open, onClose, onSuccess, vehicle }: AddVehicleModalP
     setLoading(true);
     try {
       if (isEditMode && vehicle) {
-        await vehicleApi.updateVehicle(vehicle.id, formData);
+        await vehicleApi.updateVehicle(vehicle.vehicle_plate, formData);
         showNotification("Vehicle updated successfully!", "success");
       } else {
         await vehicleApi.addVehicle(formData);
@@ -111,7 +116,9 @@ const AddVehicleModal = ({ open, onClose, onSuccess, vehicle }: AddVehicleModalP
       onClose();
     } catch (error) {
       showNotification(
-        error instanceof Error ? error.message : `Failed to ${isEditMode ? "update" : "add"} vehicle`,
+        error instanceof Error
+          ? error.message
+          : `Failed to ${isEditMode ? "update" : "add"} vehicle`,
         "error"
       );
     } finally {
@@ -246,7 +253,13 @@ const AddVehicleModal = ({ open, onClose, onSuccess, vehicle }: AddVehicleModalP
             "&:hover": { backgroundColor: "#2563eb" },
           }}
         >
-          {loading ? <CircularProgress size={20} color="inherit" /> : isEditMode ? "Update Vehicle" : "Add Vehicle"}
+          {loading ? (
+            <CircularProgress size={20} color="inherit" />
+          ) : isEditMode ? (
+            "Update Vehicle"
+          ) : (
+            "Add Vehicle"
+          )}
         </Button>
       </DialogActions>
     </Dialog>

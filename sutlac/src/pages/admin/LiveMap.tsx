@@ -1,12 +1,16 @@
-import { useEffect, useState } from "react";
-import { Box, CircularProgress, Typography } from "@mui/material";
+import { useEffect, useState, useRef } from "react";
+import { Box, CircularProgress, Typography, Alert } from "@mui/material";
 import { VehiclePane } from "../../components/livemap/VehiclePane";
 import { MapView } from "../../components/livemap/MapView";
+import {
+  TelemetryChartsPane,
+  type TelemetryDataPoint,
+} from "../../components/livemap/TelemetryChartsPane";
 import { vehicleApi } from "../../services/vehicleApi";
-import { useChatContext } from "../../utils/ChatContext";
 import type { Vehicle, VehicleTelemetry } from "../../types/vehicle";
 
 const POLLING_INTERVAL = 1000; // 1Hz - fetch every 1 second
+const MAX_DATA_POINTS = 30; // Keep last 30 readings
 
 // Design tokens
 const COLORS = {
@@ -16,18 +20,27 @@ const COLORS = {
 
 const LiveMap = () => {
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
-  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [selectedPlate, setSelectedPlate] = useState<string | null>(null);
   const [telemetry, setTelemetry] = useState<VehicleTelemetry | null>(null);
+  const [telemetryHistory, setTelemetryHistory] = useState<
+    TelemetryDataPoint[]
+  >([]);
   const [loading, setLoading] = useState(true);
-  const { setSelectedVehicle } = useChatContext();
+  const [error, setError] = useState<string | null>(null);
+  const startTimeRef = useRef<number | null>(null);
 
+  // Fetch vehicles from API
   useEffect(() => {
     const fetchVehicles = async () => {
       try {
-        const response = await vehicleApi.getVehicles();
-        setVehicles(response.vehicles);
-      } catch (error) {
-        console.error("Failed to fetch vehicles:", error);
+        setError(null);
+        const data = await vehicleApi.getVehicles();
+        setVehicles(data);
+      } catch (err) {
+        console.error("Failed to fetch vehicles:", err);
+        setError(
+          "Failed to load vehicles. Please check if the API server is running."
+        );
       } finally {
         setLoading(false);
       }
@@ -35,20 +48,37 @@ const LiveMap = () => {
     fetchVehicles();
   }, []);
 
+  // Fetch telemetry for selected vehicle and build history
   useEffect(() => {
-    if (!selectedId) {
-      setTelemetry(null);
-      setSelectedVehicle(null); // Clear chat vehicle selection
-      return;
-    }
+    // Reset when vehicle changes
+    setTelemetryHistory([]);
+    setTelemetry(null);
+    startTimeRef.current = null;
 
-    // Update chat context with selected vehicle
-    const vehicle = vehicles.find((v) => v.id === selectedId);
-    setSelectedVehicle(selectedId, vehicle?.plate);
+    if (!selectedPlate) return;
 
     const fetchTelemetry = async () => {
-      const data = await vehicleApi.getVehicleTelemetry(selectedId);
-      setTelemetry(data);
+      const data = await vehicleApi.getVehicleTelemetry(selectedPlate);
+      if (data) {
+        setTelemetry(data);
+
+        // Track time from first reading
+        if (startTimeRef.current === null) {
+          startTimeRef.current = Date.now();
+        }
+
+        // Add to history
+        setTelemetryHistory((prev) => {
+          const newPoint: TelemetryDataPoint = {
+            speed: data.speed,
+            temperature: data.temperature,
+            time: Date.now() - (startTimeRef.current || Date.now()),
+          };
+          const updated = [...prev, newPoint];
+          // Keep only last MAX_DATA_POINTS
+          return updated.slice(-MAX_DATA_POINTS);
+        });
+      }
     };
 
     // Initial fetch
@@ -58,9 +88,12 @@ const LiveMap = () => {
     const intervalId = setInterval(fetchTelemetry, POLLING_INTERVAL);
 
     return () => clearInterval(intervalId);
-  }, [selectedId, vehicles, setSelectedVehicle]);
+  }, [selectedPlate]);
 
-  const selectedVehicle = vehicles.find((v) => v.id === selectedId);
+  // Find selected vehicle for plate display
+  const selectedVehicle = vehicles.find(
+    (v) => v.vehicle_plate === selectedPlate
+  );
 
   if (loading) {
     return (
@@ -92,6 +125,13 @@ const LiveMap = () => {
         </Typography>
       </Box>
 
+      {/* Error Alert */}
+      {error && (
+        <Alert severity="error" sx={{ mb: 2 }}>
+          {error}
+        </Alert>
+      )}
+
       {/* Map Content */}
       <Box
         sx={{
@@ -103,10 +143,21 @@ const LiveMap = () => {
       >
         <VehiclePane
           vehicles={vehicles}
-          selectedId={selectedId}
-          onSelect={setSelectedId}
+          selectedPlate={selectedPlate}
+          onSelect={setSelectedPlate}
         />
-        <MapView telemetry={telemetry} vehiclePlate={selectedVehicle?.vehicle_plate} />
+        {/* Map container with overlay charts */}
+        <Box sx={{ flex: 1, position: "relative" }}>
+          <MapView
+            telemetry={telemetry}
+            vehiclePlate={selectedVehicle?.vehicle_plate}
+          />
+          {/* Telemetry Charts Overlay */}
+          <TelemetryChartsPane
+            data={telemetryHistory}
+            vehiclePlate={selectedVehicle?.vehicle_plate}
+          />
+        </Box>
       </Box>
     </Box>
   );
