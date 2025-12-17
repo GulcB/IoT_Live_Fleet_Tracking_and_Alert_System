@@ -1,9 +1,17 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
 
+// Get demo credentials from environment variables
+const DEMO_USERNAME = import.meta.env.VITE_DEMO_USERNAME || "admin";
+const DEMO_PASSWORD = import.meta.env.VITE_DEMO_PASSWORD || "admin";
+
+interface LoginResult {
+  success: boolean;
+  error?: string;
+}
+
 interface AuthContextType {
   isAuthenticated: boolean;
-  isAdmin: boolean;
-  login: () => void;
+  login: (username: string, password: string) => LoginResult;
   logout: () => void;
 }
 
@@ -12,23 +20,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  // TODO: Set back to false once Keycloak is integrated
-  // For development, everyone is auto-authenticated as admin
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(true);
-
-  // For now, everyone is admin once logged in.
-  // In the future, this will come from Keycloak/User profile.
-  const isAdmin = true;
-
-  const login = () => {
-    setIsAuthenticated(true);
-    localStorage.setItem("auth_token", "mock_token");
-  };
-
-  const logout = () => {
-    setIsAuthenticated(false);
-    localStorage.removeItem("auth_token");
-  };
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
 
   // Check storage on mount to persist session across reloads
   useEffect(() => {
@@ -38,8 +30,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   }, []);
 
+  const login = (username: string, password: string): LoginResult => {
+    // Validate against demo credentials
+    if (username === DEMO_USERNAME && password === DEMO_PASSWORD) {
+      setIsAuthenticated(true);
+      localStorage.setItem("auth_token", "demo_session");
+      return { success: true };
+    }
+    return { success: false, error: "Invalid username or password" };
+  };
+
+  const logout = () => {
+    setIsAuthenticated(false);
+    localStorage.removeItem("auth_token");
+  };
+
   return (
-    <AuthContext.Provider value={{ isAuthenticated, isAdmin, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

@@ -26,11 +26,15 @@ export const SIDEBAR_WIDTH = LAYOUT.SIDEBAR_WIDTH;
 export const NAVBAR_HEIGHT = LAYOUT.NAVBAR_HEIGHT;
 
 const menuItems = [
-  { text: "Dashboard", icon: <DashboardIcon />, path: "/" },
-  { text: "Vehicles", icon: <DirectionsCarIcon />, path: "/vehicles" },
-  { text: "Live Map", icon: <MapIcon />, path: "/map" },
-  { text: "Alerts", icon: <NotificationsIcon />, path: "/alerts" },
-  { text: "Settings", icon: <SettingsIcon />, path: "/settings" },
+  { text: "Dashboard", icon: <DashboardIcon />, path: "/dashboard" },
+  {
+    text: "Vehicles",
+    icon: <DirectionsCarIcon />,
+    path: "/dashboard/vehicles",
+  },
+  { text: "Live Map", icon: <MapIcon />, path: "/dashboard/map" },
+  { text: "Alerts", icon: <NotificationsIcon />, path: "/dashboard/alerts" },
+  { text: "Settings", icon: <SettingsIcon />, path: "/dashboard/settings" },
 ];
 
 interface SidebarProps {
