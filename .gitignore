@@ -1,4 +1,9 @@
+.postgres.env
 .worker.env
 .mosquitto.env
 .env
 venv
+/mosquitto/data
+/mosquitto/log
+denemeworker.py
+__pycache__

@@ -1,0 +1,142 @@
+volumes:
+  sutlac-db-data:
+    driver: local
+
+  mosquitto-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./mosquitto/data
+
+  mosquitto-logs:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./mosquitto/log
+
+  django-backend-volume:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ./djangoBackend
+
+networks:
+  sutlac:
+    driver: bridge
+
+services:
+  sutlac-mosquitto:
+    image: eclipse-mosquitto:2.0
+    container_name: sutlac-mosquitto
+    volumes:
+      - ./mosquitto/config/mosquitto.conf:/mosquitto/config/mosquitto.conf
+      - mosquitto-data:/mosquitto/data
+      - mosquitto-logs:/mosquitto/log
+    ports:
+      - "1883:1883"
+    networks:
+      - sutlac
+
+  worker:
+    container_name: workers-mqtt
+    build:
+      context: ./mqtt-worker
+      dockerfile: dockerfile
+    volumes:
+      - ./mqtt-worker:/app
+    networks:
+      - sutlac
+    ports:
+      - "8001:8001"
+    restart: always
+    depends_on:
+      - sutlac-mosquitto
+      - sutlac-redis
+    environment:
+      PYTHONUNBUFFERED: 1
+      PYTHONDONTWRITEBYTECODE: 1
+      MQTT_HOST: ${MQTT_HOST}
+      MQTT_PORT: ${MQTT_PORT}
+      SUB_TOPIC: ${SUB_TOPIC}
+      REDIS_HOST: ${REDIS_HOST}
+      REDIS_PORT: ${REDIS_PORT}
+      REDIS_DB: ${REDIS_DB}
+    env_file:
+      - .env
+  
+  django-backend:
+    container_name: django-backend
+    build: ./djangoBackend
+    entrypoint: ./config/start.sh
+    command: python manage.py runserver 0.0.0.0:8000
+    environment:
+      USER_DB_USER: ${POSTGRES_USER}
+      USER_DB_PASS: ${POSTGRES_PASSWORD}
+      USER_DB_NAME: ${POSTGRES_DB}
+      USER_DB_HOST: ${POSTGRES_HOST}
+      USER_DB_PORT: ${POSTGRES_PORT}
+    ports:
+      - "8000:8000"
+    volumes:
+      - django-backend-volume:/djangoBackend
+    networks:
+      - sutlac
+    depends_on:
+      - sutlac-postgres
+      - sutlac-redis
+    restart: always
+    env_file:
+      - .env
+
+  redis-bridge:
+    container_name: redis-bridge
+    build: ./djangoBackend
+    command: python manage.py redis_bridge
+    environment:
+      USER_DB_USER: ${POSTGRES_USER}
+      USER_DB_PASS: ${POSTGRES_PASSWORD}
+      USER_DB_NAME: ${POSTGRES_DB}
+      USER_DB_HOST: ${POSTGRES_HOST}
+      USER_DB_PORT: ${POSTGRES_PORT}
+      REDIS_HOST: ${REDIS_HOST}
+      REDIS_PORT: ${REDIS_PORT}
+    volumes:
+      - django-backend-volume:/djangoBackend
+    networks:
+      - sutlac
+    depends_on:
+      - sutlac-redis
+      - sutlac-postgres
+    restart: always
+    env_file:
+      - .env
+
+
+  sutlac-redis:
+    image: "redis:7-alpine"
+    container_name: sutlac-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - sutlac
+    restart: always
+
+  sutlac-postgres:
+    image: postgres:13
+    container_name: sutlac-postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - sutlac-db-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - sutlac
+    restart: always
+    env_file:
+      - .env
