@@ -5,6 +5,7 @@ import theme from "./theme/theme";
 import AppRoutes from "./routes/AppRoutes";
 import { AuthProvider } from "./utils/AuthContext";
 import { NotificationProvider } from "./utils/NotificationContext";
+import { ChatProvider } from "./utils/ChatContext";
 
 function App() {
   return (
@@ -12,9 +13,11 @@ function App() {
       <CssBaseline />
       <AuthProvider>
         <NotificationProvider>
-          <BrowserRouter>
-            <AppRoutes />
-          </BrowserRouter>
+          <ChatProvider>
+            <BrowserRouter>
+              <AppRoutes />
+            </BrowserRouter>
+          </ChatProvider>
         </NotificationProvider>
       </AuthProvider>
     </ThemeProvider>

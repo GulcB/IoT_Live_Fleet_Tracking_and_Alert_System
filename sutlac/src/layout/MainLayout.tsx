@@ -4,6 +4,8 @@ import { Box, useTheme, useMediaQuery } from "@mui/material";
 import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
 import { LAYOUT } from "../theme/tokens";
+import { ChatFAB } from "../components/chat/ChatFAB";
+import { ChatWindow } from "../components/chat/ChatWindow";
 
 const { NAVBAR_HEIGHT, CONTENT_PADDING } = LAYOUT;
 
@@ -44,6 +46,10 @@ const MainLayout = () => {
           <Outlet />
         </Box>
       </Box>
+
+      {/* Chat Widget Components */}
+      <ChatFAB />
+      <ChatWindow />
     </Box>
   );
 };

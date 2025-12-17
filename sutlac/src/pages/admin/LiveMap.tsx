@@ -3,6 +3,7 @@ import { Box, CircularProgress, Typography } from "@mui/material";
 import { VehiclePane } from "../../components/livemap/VehiclePane";
 import { MapView } from "../../components/livemap/MapView";
 import { vehicleApi } from "../../services/vehicleApi";
+import { useChatContext } from "../../utils/ChatContext";
 import type { Vehicle, VehicleTelemetry } from "../../types/vehicle";
 
 const POLLING_INTERVAL = 1000; // 1Hz - fetch every 1 second
@@ -18,6 +19,7 @@ const LiveMap = () => {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [telemetry, setTelemetry] = useState<VehicleTelemetry | null>(null);
   const [loading, setLoading] = useState(true);
+  const { setSelectedVehicle } = useChatContext();
 
   useEffect(() => {
     const fetchVehicles = async () => {
@@ -36,8 +38,13 @@ const LiveMap = () => {
   useEffect(() => {
     if (!selectedId) {
       setTelemetry(null);
+      setSelectedVehicle(null); // Clear chat vehicle selection
       return;
     }
+
+    // Update chat context with selected vehicle
+    const vehicle = vehicles.find((v) => v.id === selectedId);
+    setSelectedVehicle(selectedId, vehicle?.plate);
 
     const fetchTelemetry = async () => {
       const data = await vehicleApi.getVehicleTelemetry(selectedId);
@@ -51,7 +58,7 @@ const LiveMap = () => {
     const intervalId = setInterval(fetchTelemetry, POLLING_INTERVAL);
 
     return () => clearInterval(intervalId);
-  }, [selectedId]);
+  }, [selectedId, vehicles, setSelectedVehicle]);
 
   const selectedVehicle = vehicles.find((v) => v.id === selectedId);
 
