@@ -3,10 +3,10 @@ import json
 import redis
 import paho.mqtt.client as mqtt
 
-WORKER_HOST = os.getenv("MQTT_HOST", "sutlac-mosquitto")
-WORKER_PORT = int(os.getenv("MQTT_PORT", "1883"))
+WORKER_HOST = os.getenv("MQTT_HOST", "")
+WORKER_PORT = int(os.getenv("MQTT_PORT", ""))
 SUB_TOPIC = "fleet/TR34/vehicle/+/telemetry"
-REDIS_HOST = os.getenv("REDIS_HOST", "sutlac-redis")
+REDIS_HOST = os.getenv("REDIS_HOST", "")
 REDIS_PORT = int(os.getenv("REDIS_PORT", "6379"))
 REDIS_DB   = int(os.getenv("REDIS_DB", "0"))
 
