@@ -1,7 +1,7 @@
 // Vehicle types matching the real API response
 export type VehicleType = "CAR" | "TRUCK" | "VAN" | "BUS";
 
-// Base vehicle from API (GET /feel-tracking/get)
+// Base vehicle from API (GET /api/feel-tracking/list/)
 export interface Vehicle {
   id?: string; // Some APIs may not return id
   vehicle_plate: string;

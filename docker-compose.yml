@@ -141,7 +141,7 @@ services:
     env_file:
       - .env
 
-  ngnix:
+  nginx:
     image: nginx:latest
     container_name: sutlac-nginx
     ports:

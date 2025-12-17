@@ -89,8 +89,7 @@ const Vehicles = () => {
 
     setDeleteLoading(true);
     try {
-      // Use vehicle_plate for delete since API may not have id
-      await vehicleApi.deleteVehicle(vehicleToDelete.vehicle_plate);
+      await vehicleApi.deleteVehicle(vehicleToDelete.id!);
       showNotification(
         `Vehicle ${vehicleToDelete.vehicle_plate} deleted successfully!`,
         "success"

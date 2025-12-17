@@ -5,6 +5,18 @@ import "leaflet/dist/leaflet.css";
 import type { VehicleTelemetry } from "../../types/vehicle";
 import { useEffect } from "react";
 
+// Fix Leaflet default marker icon issue with Vite
+import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
+import markerIcon from 'leaflet/dist/images/marker-icon.png';
+import markerShadow from 'leaflet/dist/images/marker-shadow.png';
+
+delete (L.Icon.Default.prototype as any)._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconUrl: markerIcon,
+  iconRetinaUrl: markerIcon2x,
+  shadowUrl: markerShadow,
+});
+
 // Design tokens (consistent across all components)
 const COLORS = {
   cardBg: "#ffffff",
@@ -55,15 +67,17 @@ const MapView = ({ telemetry, vehiclePlate }: MapViewProps) => {
         overflow: "hidden",
         display: "flex",
         flexDirection: "column",
+        height: "100%",
       }}
       elevation={0}
     >
       {/* Map Container */}
-      <Box sx={{ flex: 1, position: "relative", minHeight: 400 }}>
+      <Box sx={{ flex: 1, position: "relative", minHeight: "500px", height: "100%" }}>
         <MapContainer
           center={center}
           zoom={telemetry ? 10 : 6}
-          style={{ height: "100%", width: "100%" }}
+          style={{ height: "100%", width: "100%", position: "absolute", top: 0, left: 0 }}
+          scrollWheelZoom={true}
         >
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'

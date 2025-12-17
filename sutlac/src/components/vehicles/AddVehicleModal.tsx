@@ -105,7 +105,7 @@ const AddVehicleModal = ({
     setLoading(true);
     try {
       if (isEditMode && vehicle) {
-        await vehicleApi.updateVehicle(vehicle.vehicle_plate, formData);
+        await vehicleApi.updateVehicle(vehicle.id!, formData);
         showNotification("Vehicle updated successfully!", "success");
       } else {
         await vehicleApi.addVehicle(formData);
@@ -157,12 +157,11 @@ const AddVehicleModal = ({
           justifyContent: "space-between",
           alignItems: "center",
           pb: 1,
+          fontWeight: 600,
         }}
       >
-        <Typography variant="h6" fontWeight={600}>
-          {isEditMode ? "Edit Vehicle" : "Add New Vehicle"}
-        </Typography>
-        <IconButton onClick={handleClose} size="small">
+        {isEditMode ? "Edit Vehicle" : "Add New Vehicle"}
+        <IconButton onClick={handleClose} size="small" sx={{ ml: 2 }}>
           <CloseIcon />
         </IconButton>
       </DialogTitle>

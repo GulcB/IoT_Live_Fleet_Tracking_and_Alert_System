@@ -24,10 +24,10 @@ const mockTelemetryData: Record<string, TelemetryReading[]> = {
 export const vehicleApi = {
   /**
    * Fetch all vehicles from the real API
-   * GET http://localhost:8000/feel-tracking/get
+   * GET http://localhost:8000/api/feel-tracking/list/
    */
   getVehicles: async (): Promise<Vehicle[]> => {
-    const response = await fetch(`${API_BASE_URL}/feel-tracking/get`);
+    const response = await fetch(`${API_BASE_URL}/api/feel-tracking/list/`);
 
     if (!response.ok) {
       throw new Error(`Failed to fetch vehicles: ${response.statusText}`);
@@ -39,10 +39,10 @@ export const vehicleApi = {
 
   /**
    * Add a new vehicle
-   * POST http://localhost:8000/feel-tracking/add/
+   * POST http://localhost:8000/api/feel-tracking/add/
    */
   addVehicle: async (data: VehicleCreate): Promise<Vehicle> => {
-    const response = await fetch(`${API_BASE_URL}/feel-tracking/add/`, {
+    const response = await fetch(`${API_BASE_URL}/api/feel-tracking/add/`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -64,7 +64,7 @@ export const vehicleApi = {
     id: string,
     data: Partial<VehicleCreate>
   ): Promise<Vehicle> => {
-    const response = await fetch(`${API_BASE_URL}/feel-tracking/${id}/`, {
+    const response = await fetch(`${API_BASE_URL}/api/feel-tracking/detail/${id}/`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
@@ -83,7 +83,7 @@ export const vehicleApi = {
    * Delete a vehicle
    */
   deleteVehicle: async (id: string): Promise<void> => {
-    const response = await fetch(`${API_BASE_URL}/feel-tracking/${id}/`, {
+    const response = await fetch(`${API_BASE_URL}/api/feel-tracking/detail/${id}/`, {
       method: "DELETE",
     });
 
