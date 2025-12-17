@@ -22,8 +22,8 @@ const LiveMap = () => {
   useEffect(() => {
     const fetchVehicles = async () => {
       try {
-        const data = await vehicleApi.getVehicles();
-        setVehicles(data);
+        const response = await vehicleApi.getVehicles();
+        setVehicles(response.vehicles);
       } catch (error) {
         console.error("Failed to fetch vehicles:", error);
       } finally {
@@ -99,7 +99,7 @@ const LiveMap = () => {
           selectedId={selectedId}
           onSelect={setSelectedId}
         />
-        <MapView telemetry={telemetry} vehiclePlate={selectedVehicle?.plate} />
+        <MapView telemetry={telemetry} vehiclePlate={selectedVehicle?.vehicle_plate} />
       </Box>
     </Box>
   );

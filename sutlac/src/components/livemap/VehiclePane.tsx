@@ -36,11 +36,12 @@ interface VehiclePaneProps {
 
 const getStatusColor = (status: Vehicle["status"]) => {
   switch (status) {
-    case "active":
+    case "moving":
       return COLORS.statusActive;
     case "idle":
       return COLORS.statusIdle;
-    case "maintenance":
+    case "stopped":
+    case "in_garage":
       return COLORS.statusMaintenance;
     default:
       return COLORS.textSecondary;
@@ -94,8 +95,8 @@ const VehiclePane = ({ vehicles, selectedId, onSelect }: VehiclePaneProps) => {
               }}
             >
               <ListItemText
-                primary={vehicle.plate}
-                secondary={`${vehicle.model} • ${vehicle.driverName}`}
+                primary={vehicle.vehicle_plate}
+                secondary={`${vehicle.model} • ${vehicle.driver_name || "No driver"}`}
                 primaryTypographyProps={{
                   fontWeight: 600,
                   fontSize: 14,
