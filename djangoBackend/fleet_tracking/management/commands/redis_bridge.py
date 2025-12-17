@@ -16,12 +16,12 @@ class Command(BaseCommand):
 
         r = redis.Redis(host=redis_host, port=redis_port, decode_responses=True)
         pubsub = r.pubsub()
-        pubsub.psubscribe("fleet.telemetry*")  # fleet.telemetry ve fleet.telemetry.<vehicle_id>
+        pubsub.psubscribe("fleet.telemetry*") # fleet.telemetry ve fleet.telemetry.<vehicle_id>
 
         channel_layer = get_channel_layer()
 
         self.stdout.write(self.style.SUCCESS(
-            f"🚀 Bridge başladı. Redis: {redis_host}:{redis_port} | Pattern: fleet.telemetry*"
+            f"Bridge başladı. Redis: {redis_host}:{redis_port} | Pattern: fleet.telemetry*"
         ))
 
         for msg in pubsub.listen():
@@ -29,27 +29,24 @@ class Command(BaseCommand):
                 continue
 
             redis_channel = msg["channel"]
-            print("channel: ", redis_channel)
-            payload = msg["data"]            # JSON string
-
-            # JSON parse (string gelirse olduğu gibi de gönderebiliriz)
+            print("channel name: ", redis_channel)
+            payload = msg["data"]
             try:
                 data = json.loads(payload)
             except Exception:
                 data = {"raw": payload}
 
-            # channel -> group mapping
             # 1) fleet.telemetry  => broadcast
             print("gelen data:", data)
             if redis_channel == "fleet.telemetry":
                 group_name = "fleet_all"
             else:
                 # 2) fleet.telemetry.<vehicle_id> => araca özel
-                # örn "fleet.telemetry.VEH-0001" -> "VEH-0001"
                 parts = redis_channel.split(".")
                 vehicle_id = parts[-1] if len(parts) >= 3 else "unknown"
-                group_name = f"vehicle_{vehicle_id}"
+                group_name = f"telemetry_vehicle_{vehicle_id}"
 
+            print("group_name_last: ", group_name)
             async_to_sync(channel_layer.group_send)(
                 group_name,
                 {"type": "telemetry.message", "data": data}
