@@ -10,6 +10,10 @@ class TypeCar(models.TextChoices):
 class GeoType(models.TextChoices):
 	ALLOWED = 'ALLOWED', 'ALLOWED'
 	RESTRICTED = 'RESTRICTED', 'RESTRICTED'
+
+class GeoViolationType(models.TextChoices):
+	ENTER = 'ENTER', 'ENTER'
+	EXIT = 'EXIT', 'EXIT'
 # Create your models here.
 
 
@@ -28,7 +32,7 @@ class Geofence(models.Model):
 	polygon = gis_models.PolygonField(srid=4326, null=True, blank=True)
 	type = models.Charfield(max_length=10, choices=GeoType.choices, default=GeoType.RESTRICTED)
 	vehicle = models.ForeignKey(
-        "fleet_tracking.Fleet",   # app label'ın farklıysa düzelt
+        "fleet_tracking.Fleet",
         on_delete=models.CASCADE,
         related_name="geofences",
         null=True,
@@ -37,3 +41,15 @@ class Geofence(models.Model):
 	is_active = models.BooleanField(default=True)
 	created_at = models.DateTimeField(auto_now_add=True)
 	updated_at = models.DateTimeField(auto_now=True)
+
+class GeofenceViolation(models.Model):
+	vehicle = models.ForeignKey(
+        "fleet_tracking.Fleet",
+        on_delete=models.CASCADE,
+        related_name="geofences_violation",
+    ) 
+	geofence =  models.ForeignKey(Geofence,
+		on_delete=models.CASCADE,
+        related_name="geofences",)
+	violation_type = models.CharField(max_length=5, choices=GeoViolationType.choices, default=GeoViolationType.ENTER)
+	timestamp = models.DateTimeField()
