@@ -15,8 +15,6 @@ r = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, db=REDIS_DB, decode_responses=
 
 def publish_telemetry(payload: dict):
     """ 
-    Örnek kanal stratejisi:
-        - fleet.telemetry : tüm telemetri (genel)
         - fleet.telemetry.<vehicle_id> : araç bazlı kanal
     """
     vehicle_id = payload.get("vehicle_id", "unknown")
@@ -24,14 +22,10 @@ def publish_telemetry(payload: dict):
     r.publish(f"fleet.telemetry.{vehicle_id}", msg)
 
 def on_connect(client, userdata, flags, rc):
-    print("CONNECTED rc =", rc)
     client.subscribe(SUB_TOPIC)
-    print("SUBSCRIBED:", SUB_TOPIC)
 
 def on_message(client, userdata, msg):
     try:
-        print("topic:", msg.topic)
-        print("payload:", msg.payload.decode())
         data = json.loads(msg.payload.decode("utf-8"))
         data["topic"] = msg.topic
         publish_telemetry(data)
