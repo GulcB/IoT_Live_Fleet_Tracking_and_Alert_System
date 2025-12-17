@@ -18,7 +18,9 @@ import VehicleFilters, {
 } from "../../components/vehicles/VehicleFilters";
 import VehicleTable from "../../components/vehicles/VehicleTable";
 import AddVehicleModal from "../../components/vehicles/AddVehicleModal";
+import DeleteConfirmDialog from "../../components/vehicles/DeleteConfirmDialog";
 import { vehicleApi } from "../../services/vehicleApi";
+import { useNotification } from "../../utils/NotificationContext";
 import type { Vehicle } from "../../types/vehicle";
 
 const PAGE_SIZE = 5;
@@ -31,6 +33,11 @@ const Vehicles = () => {
   const [activeFilter, setActiveFilter] = useState<FilterTab>("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
+  const [editVehicle, setEditVehicle] = useState<Vehicle | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [vehicleToDelete, setVehicleToDelete] = useState<Vehicle | null>(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
+  const { showNotification } = useNotification();
 
   const fetchVehicles = useCallback(async () => {
     setLoading(true);
@@ -77,6 +84,44 @@ const Vehicles = () => {
   };
 
   const totalPages = Math.ceil(totalVehicles / PAGE_SIZE);
+
+  const handleEdit = (vehicle: Vehicle) => {
+    setEditVehicle(vehicle);
+    setModalOpen(true);
+  };
+
+  const handleDelete = (vehicleId: string) => {
+    const vehicle = vehicles.find((v) => v.id === vehicleId);
+    if (vehicle) {
+      setVehicleToDelete(vehicle);
+      setDeleteDialogOpen(true);
+    }
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!vehicleToDelete) return;
+
+    setDeleteLoading(true);
+    try {
+      await vehicleApi.deleteVehicle(vehicleToDelete.id);
+      showNotification(`Vehicle ${vehicleToDelete.vehicle_plate} deleted successfully!`, "success");
+      setDeleteDialogOpen(false);
+      setVehicleToDelete(null);
+      fetchVehicles();
+    } catch (error) {
+      showNotification(
+        error instanceof Error ? error.message : "Failed to delete vehicle",
+        "error"
+      );
+    } finally {
+      setDeleteLoading(false);
+    }
+  };
+
+  const handleCancelDelete = () => {
+    setDeleteDialogOpen(false);
+    setVehicleToDelete(null);
+  };
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
@@ -210,7 +255,11 @@ const Vehicles = () => {
       {loading ? (
         <Box sx={{ textAlign: "center", py: 4 }}>Loading...</Box>
       ) : (
-        <VehicleTable vehicles={filteredVehicles} />
+        <VehicleTable
+          vehicles={filteredVehicles}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+        />
       )}
 
       {/* Pagination */}
@@ -242,11 +291,24 @@ const Vehicles = () => {
         />
       </Box>
 
-      {/* Add Vehicle Modal */}
+      {/* Add/Edit Vehicle Modal */}
       <AddVehicleModal
         open={modalOpen}
-        onClose={() => setModalOpen(false)}
+        onClose={() => {
+          setModalOpen(false);
+          setEditVehicle(null);
+        }}
         onSuccess={fetchVehicles}
+        vehicle={editVehicle}
+      />
+
+      {/* Delete Confirmation Dialog */}
+      <DeleteConfirmDialog
+        open={deleteDialogOpen}
+        vehiclePlate={vehicleToDelete?.vehicle_plate || ""}
+        onConfirm={handleConfirmDelete}
+        onCancel={handleCancelDelete}
+        loading={deleteLoading}
       />
     </Box>
   );

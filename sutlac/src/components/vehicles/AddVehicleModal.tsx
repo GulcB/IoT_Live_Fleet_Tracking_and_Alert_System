@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -16,7 +16,7 @@ import {
   CircularProgress,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import type { VehicleCreate, VehicleType } from "../../types/vehicle";
+import type { Vehicle, VehicleCreate, VehicleType } from "../../types/vehicle";
 import { vehicleApi } from "../../services/vehicleApi";
 import { useNotification } from "../../utils/NotificationContext";
 
@@ -24,6 +24,7 @@ interface AddVehicleModalProps {
   open: boolean;
   onClose: () => void;
   onSuccess: () => void;
+  vehicle?: Vehicle | null; // Optional vehicle for edit mode
 }
 
 const VEHICLE_TYPES: { value: VehicleType; label: string }[] = [
@@ -41,11 +42,37 @@ const INITIAL_FORM: VehicleCreate = {
   vehicle_type: "CAR",
 };
 
-const AddVehicleModal = ({ open, onClose, onSuccess }: AddVehicleModalProps) => {
-  const [formData, setFormData] = useState<VehicleCreate>(INITIAL_FORM);
+const AddVehicleModal = ({ open, onClose, onSuccess, vehicle }: AddVehicleModalProps) => {
+  const isEditMode = !!vehicle;
+  const [formData, setFormData] = useState<VehicleCreate>(
+    vehicle
+      ? {
+        vehicle_plate: vehicle.vehicle_plate,
+        brand: vehicle.brand,
+        model: vehicle.model,
+        year: vehicle.year,
+        vehicle_type: vehicle.vehicle_type,
+      }
+      : INITIAL_FORM
+  );
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const { showNotification } = useNotification();
+
+  // Update form data when vehicle prop changes (for edit mode)
+  useEffect(() => {
+    if (vehicle) {
+      setFormData({
+        vehicle_plate: vehicle.vehicle_plate,
+        brand: vehicle.brand,
+        model: vehicle.model,
+        year: vehicle.year,
+        vehicle_type: vehicle.vehicle_type,
+      });
+    } else {
+      setFormData(INITIAL_FORM);
+    }
+  }, [vehicle]);
 
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
@@ -72,14 +99,19 @@ const AddVehicleModal = ({ open, onClose, onSuccess }: AddVehicleModalProps) => 
 
     setLoading(true);
     try {
-      await vehicleApi.addVehicle(formData);
-      showNotification("Vehicle added successfully!", "success");
+      if (isEditMode && vehicle) {
+        await vehicleApi.updateVehicle(vehicle.id, formData);
+        showNotification("Vehicle updated successfully!", "success");
+      } else {
+        await vehicleApi.addVehicle(formData);
+        showNotification("Vehicle added successfully!", "success");
+      }
       setFormData(INITIAL_FORM);
       onSuccess();
       onClose();
     } catch (error) {
       showNotification(
-        error instanceof Error ? error.message : "Failed to add vehicle",
+        error instanceof Error ? error.message : `Failed to ${isEditMode ? "update" : "add"} vehicle`,
         "error"
       );
     } finally {
@@ -121,7 +153,7 @@ const AddVehicleModal = ({ open, onClose, onSuccess }: AddVehicleModalProps) => 
         }}
       >
         <Typography variant="h6" fontWeight={600}>
-          Add New Vehicle
+          {isEditMode ? "Edit Vehicle" : "Add New Vehicle"}
         </Typography>
         <IconButton onClick={handleClose} size="small">
           <CloseIcon />
@@ -214,7 +246,7 @@ const AddVehicleModal = ({ open, onClose, onSuccess }: AddVehicleModalProps) => 
             "&:hover": { backgroundColor: "#2563eb" },
           }}
         >
-          {loading ? <CircularProgress size={20} color="inherit" /> : "Add Vehicle"}
+          {loading ? <CircularProgress size={20} color="inherit" /> : isEditMode ? "Update Vehicle" : "Add Vehicle"}
         </Button>
       </DialogActions>
     </Dialog>

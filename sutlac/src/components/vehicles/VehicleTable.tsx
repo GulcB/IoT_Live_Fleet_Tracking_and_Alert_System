@@ -21,9 +21,11 @@ import StatusBadge from "../common/StatusBadge";
 interface VehicleTableProps {
   vehicles: Vehicle[];
   onRowClick?: (vehicle: Vehicle) => void;
+  onEdit?: (vehicle: Vehicle) => void;
+  onDelete?: (vehicleId: string) => void;
 }
 
-const VehicleTable = ({ vehicles, onRowClick }: VehicleTableProps) => {
+const VehicleTable = ({ vehicles, onRowClick, onEdit, onDelete }: VehicleTableProps) => {
   return (
     <TableContainer
       component={Paper}
@@ -171,7 +173,7 @@ const VehicleTable = ({ vehicles, onRowClick }: VehicleTableProps) => {
                     sx={{ color: "#64748b" }}
                     onClick={(e) => {
                       e.stopPropagation();
-                      // Handle edit
+                      onEdit?.(vehicle);
                     }}
                   >
                     <EditIcon fontSize="small" />
@@ -181,7 +183,7 @@ const VehicleTable = ({ vehicles, onRowClick }: VehicleTableProps) => {
                     sx={{ color: "#ef4444" }}
                     onClick={(e) => {
                       e.stopPropagation();
-                      // Handle delete
+                      onDelete?.(vehicle.id);
                     }}
                   >
                     <DeleteIcon fontSize="small" />

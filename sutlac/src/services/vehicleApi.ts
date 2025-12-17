@@ -25,6 +25,32 @@ export const vehicleApi = {
     return response.json();
   },
 
+  updateVehicle: async (id: string, data: Partial<VehicleCreate>): Promise<Vehicle> => {
+    const response = await fetch(`${API_BASE_URL}/feel-tracking/${id}/`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to update vehicle: ${response.statusText}`);
+    }
+
+    return response.json();
+  },
+
+  deleteVehicle: async (id: string): Promise<void> => {
+    const response = await fetch(`${API_BASE_URL}/feel-tracking/${id}/`, {
+      method: "DELETE",
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed to delete vehicle: ${response.statusText}`);
+    }
+  },
+
   getVehicles: async (
     page: number = 1,
     pageSize: number = 10
