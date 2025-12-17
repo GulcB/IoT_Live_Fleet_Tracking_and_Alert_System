@@ -19,5 +19,5 @@ export interface ChatState {
     isOpen: boolean;
     activeChannel: ChatChannel;
     selectedVehicleId: string | null;
-    unreadCount: number;
+    unreadCount: number; 
 }
