@@ -28,9 +28,10 @@ const COLORS = {
 interface NavbarProps {
   onMenuClick: () => void;
   pageTitle?: string;
+  isMobile: boolean;
 }
 
-const Navbar = ({ onMenuClick, pageTitle = "Fleet Overview" }: NavbarProps) => {
+const Navbar = ({ onMenuClick, isMobile, pageTitle = "Fleet Overview" }: NavbarProps) => {
   const currentDate = new Date().toLocaleDateString("en-US", {
     year: "numeric",
     month: "long",
@@ -46,8 +47,8 @@ const Navbar = ({ onMenuClick, pageTitle = "Fleet Overview" }: NavbarProps) => {
         height: NAVBAR_HEIGHT,
         borderRadius: "0 0 20px 0",
         backgroundColor: COLORS.navbar,
-        ml: { xs: 0, md: `${SIDEBAR_WIDTH}px` },
-        width: { xs: "100%", md: `calc(100% - ${SIDEBAR_WIDTH}px)` },
+        left: isMobile ? 0 : SIDEBAR_WIDTH,
+        width: isMobile ? "100%" : `calc(100% - ${SIDEBAR_WIDTH}px)`,
         boxShadow: "0 4px 24px rgba(0, 0, 0, 0.15)",
       }}
       role="banner"

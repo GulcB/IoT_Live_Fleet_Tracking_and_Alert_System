@@ -272,6 +272,7 @@ const Sidebar = ({ open, onClose }: SidebarProps) => {
             width: SIDEBAR_WIDTH,
             boxSizing: "border-box",
             border: "none",
+            overflowX: "hidden",
           },
         }}
       >
@@ -291,6 +292,7 @@ const Sidebar = ({ open, onClose }: SidebarProps) => {
           boxSizing: "border-box",
           border: "none",
           borderRight: `1px solid ${COLORS.borderLight}`,
+          overflowX: "hidden",
         },
       }}
       open
