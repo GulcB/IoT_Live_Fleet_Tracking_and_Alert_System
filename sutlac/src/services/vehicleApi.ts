@@ -6,20 +6,11 @@ import type {
 } from "../types/vehicle";
 
 const API_BASE_URL = "http://localhost:8000";
+const WS_BASE_URL = "ws://localhost:8000";
 
-// Track current index per vehicle for cycling through mock telemetry data
-const vehicleIndexMap: Record<string, number> = {};
-
-// Mock telemetry data (will be replaced when telemetry API is ready)
-const mockTelemetryData: Record<string, TelemetryReading[]> = {
-  default: [
-    { gps: { lat: 41.0082, lng: 28.9784 }, speed: 65, temperature: -18 },
-    { gps: { lat: 41.0092, lng: 28.9794 }, speed: 70, temperature: -17 },
-    { gps: { lat: 41.0102, lng: 28.9804 }, speed: 68, temperature: -18 },
-    { gps: { lat: 41.0112, lng: 28.9814 }, speed: 72, temperature: -19 },
-    { gps: { lat: 41.0122, lng: 28.9824 }, speed: 75, temperature: -18 },
-  ],
-};
+// Cache for WebSocket connections per vehicle
+const wsConnections: Record<string, WebSocket> = {};
+const latestTelemetry: Record<string, VehicleTelemetry> = {};
 
 export const vehicleApi = {
   /**
@@ -93,36 +84,104 @@ export const vehicleApi = {
   },
 
   /**
-   * Get telemetry for a vehicle (still uses mock data)
-   * Will be replaced when telemetry API is ready
+   * Get telemetry for a vehicle via WebSocket
+   * Connects to ws://localhost:8000/ws/telemetry/<vehiclePlate>
    */
   getVehicleTelemetry: async (
     vehiclePlate: string
   ): Promise<VehicleTelemetry | null> => {
-    // Simulate small delay for realistic behavior
-    await new Promise((resolve) => setTimeout(resolve, 50));
-
-    // Use default mock data for any vehicle
-    const readings = mockTelemetryData["default"];
-    if (!readings || readings.length === 0) return null;
-
-    // Get current index and cycle through readings
-    if (!(vehiclePlate in vehicleIndexMap)) {
-      vehicleIndexMap[vehiclePlate] = 0;
+    // Normalize plate by removing spaces for WebSocket URL
+    const normalizedPlate = vehiclePlate.replace(/\s+/g, "");
+    
+    // Return cached data if available
+    if (latestTelemetry[normalizedPlate]) {
+      return latestTelemetry[normalizedPlate];
     }
 
-    const currentIndex = vehicleIndexMap[vehiclePlate];
-    const reading = readings[currentIndex];
+    // If WebSocket already connected, wait for data
+    if (wsConnections[normalizedPlate]) {
+      // Wait a bit for data to arrive
+      await new Promise((resolve) => setTimeout(resolve, 100));
+      return latestTelemetry[normalizedPlate] || null;
+    }
 
-    // Move to next reading (loop back to start)
-    vehicleIndexMap[vehiclePlate] = (currentIndex + 1) % readings.length;
+    // Create new WebSocket connection
+    return new Promise((resolve) => {
+      const ws = new WebSocket(`${WS_BASE_URL}/ws/telemetry/${normalizedPlate}/`);
+      wsConnections[normalizedPlate] = ws;
 
-    return {
-      vehicleId: vehiclePlate,
-      gps: reading.gps,
-      speed: reading.speed,
-      temperature: reading.temperature,
-      lastUpdate: new Date().toISOString(),
-    };
+      ws.onopen = () => {
+        console.log(`WebSocket connected for vehicle: ${vehiclePlate}`);
+      };
+
+      ws.onmessage = (event) => {
+        try {
+          const data = JSON.parse(event.data);
+          
+          // Transform backend data to frontend format
+          const telemetry: VehicleTelemetry = {
+            vehicleId: vehiclePlate,
+            gps: {
+              lat: data.gps?.latitude || 41.0082,
+              lng: data.gps?.longitude || 28.9784,
+            },
+            speed: data.speed_kmh || 0,
+            temperature: data.cabin_temp_c || 0,
+            lastUpdate: data.timestamp || new Date().toISOString(),
+          };
+
+          latestTelemetry[normalizedPlate] = telemetry;
+          
+          // Don't resolve again if already resolved (for subsequent messages)
+          if (!latestTelemetry[normalizedPlate + '_resolved']) {
+            latestTelemetry[normalizedPlate + '_resolved'] = telemetry;
+            resolve(telemetry);
+          }
+        } catch (error) {
+          console.error("Failed to parse telemetry data:", error);
+        }
+      };
+
+      ws.onerror = (error) => {
+        console.error(`WebSocket error for ${vehiclePlate}:`, error);
+        delete wsConnections[normalizedPlate];
+        resolve(null);
+      };
+
+      ws.onclose = () => {
+        console.log(`WebSocket closed for vehicle: ${vehiclePlate}`);
+        delete wsConnections[normalizedPlate];
+      };
+
+      // Timeout after 5 seconds if no data received
+      setTimeout(() => {
+        if (!latestTelemetry[normalizedPlate]) {
+          resolve(null);
+        }
+      }, 5000);
+    });
+  },
+
+  /**
+   * Close WebSocket connection for a specific vehicle
+   */
+  closeVehicleTelemetry: (vehiclePlate: string) => {
+    const normalizedPlate = vehiclePlate.replace(/\s+/g, "");
+    if (wsConnections[normalizedPlate]) {
+      wsConnections[normalizedPlate].close();
+      delete wsConnections[normalizedPlate];
+      delete latestTelemetry[normalizedPlate];
+    }
+  },
+
+  /**
+   * Close all WebSocket connections
+   */
+  closeAllTelemetry: () => {
+    Object.keys(wsConnections).forEach((plate) => {
+      wsConnections[plate].close();
+    });
+    Object.keys(wsConnections).forEach((key) => delete wsConnections[key]);
+    Object.keys(latestTelemetry).forEach((key) => delete latestTelemetry[key]);
   },
 };

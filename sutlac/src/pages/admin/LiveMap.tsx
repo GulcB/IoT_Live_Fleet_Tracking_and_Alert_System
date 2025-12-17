@@ -87,8 +87,21 @@ const LiveMap = () => {
     // Poll at 1Hz
     const intervalId = setInterval(fetchTelemetry, POLLING_INTERVAL);
 
-    return () => clearInterval(intervalId);
+    return () => {
+      clearInterval(intervalId);
+      // Close WebSocket when vehicle changes or component unmounts
+      if (selectedPlate) {
+        vehicleApi.closeVehicleTelemetry(selectedPlate);
+      }
+    };
   }, [selectedPlate]);
+
+  // Cleanup all WebSocket connections on unmount
+  useEffect(() => {
+    return () => {
+      vehicleApi.closeAllTelemetry();
+    };
+  }, []);
 
   // Find selected vehicle for plate display
   const selectedVehicle = vehicles.find(
