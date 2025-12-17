@@ -56,10 +56,16 @@ services:
       - sutlac-mosquitto
       - sutlac-redis
     environment:
-    - PYTHONUNBUFFERED=1
-    - PYTHONDONTWRITEBYTECODE=1
+      PYTHONUNBUFFERED: 1
+      PYTHONDONTWRITEBYTECODE: 1
+      MQTT_HOST: ${MQTT_HOST}
+      MQTT_PORT: ${MQTT_PORT}
+      SUB_TOPIC: ${SUB_TOPIC}
+      REDIS_HOST: ${REDIS_HOST}
+      REDIS_PORT: ${REDIS_PORT}
+      REDIS_DB: ${REDIS_DB}
     env_file:
-      - ./env/.worker.env
+      - .env
   
   django-backend:
     container_name: django-backend
@@ -83,7 +89,7 @@ services:
       - sutlac-redis
     restart: always
     env_file:
-      - ./env/.postgres.env
+      - .env
 
   redis-bridge:
     container_name: redis-bridge
@@ -95,8 +101,8 @@ services:
       USER_DB_NAME: ${POSTGRES_DB}
       USER_DB_HOST: ${POSTGRES_HOST}
       USER_DB_PORT: ${POSTGRES_PORT}
-      REDIS_HOST: sutlac-redis
-      REDIS_PORT: 6379
+      REDIS_HOST: ${REDIS_HOST}
+      REDIS_PORT: ${REDIS_PORT}
     volumes:
       - django-backend-volume:/djangoBackend
     networks:
@@ -106,7 +112,7 @@ services:
       - sutlac-postgres
     restart: always
     env_file:
-      - ./env/.postgres.env
+      - .env
 
 
   sutlac-redis:
@@ -133,4 +139,4 @@ services:
       - sutlac
     restart: always
     env_file:
-      - ./env/.postgres.env
+      - .env
