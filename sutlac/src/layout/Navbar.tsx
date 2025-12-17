@@ -12,18 +12,9 @@ import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
 import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined";
 import ChatBubbleOutlineIcon from "@mui/icons-material/ChatBubbleOutline";
-import { SIDEBAR_WIDTH, NAVBAR_HEIGHT } from "./Sidebar";
+import { LAYOUT, COLORS } from "../theme/tokens";
 
-// Design tokens
-const COLORS = {
-  navbar: "#161e2b",
-  textPrimary: "rgba(255, 255, 255, 0.9)",
-  textSecondary: "rgba(255, 255, 255, 0.5)",
-  hoverBg: "rgba(255, 255, 255, 0.08)",
-  focusBg: "rgba(255, 255, 255, 0.15)",
-  accent: "#0d9488",
-  badge: "#ef4444",
-};
+const { SIDEBAR_WIDTH, NAVBAR_HEIGHT } = LAYOUT;
 
 interface NavbarProps {
   onMenuClick: () => void;

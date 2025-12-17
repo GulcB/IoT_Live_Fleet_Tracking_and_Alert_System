@@ -20,27 +20,11 @@ import MapIcon from "@mui/icons-material/Map";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import SupportAgentOutlinedIcon from "@mui/icons-material/SupportAgentOutlined";
 import { useAuth } from "../utils/AuthContext";
+import { LAYOUT, COLORS } from "../theme/tokens";
 
-// Layout constants (exported for use in other layout components)
-export const SIDEBAR_WIDTH = 240;
-export const NAVBAR_HEIGHT = 72;
+export const SIDEBAR_WIDTH = LAYOUT.SIDEBAR_WIDTH;
+export const NAVBAR_HEIGHT = LAYOUT.NAVBAR_HEIGHT;
 
-// Design tokens
-const COLORS = {
-  sidebar: "#161e2b",
-  accent: "#0d9488",
-  accentGradient: "linear-gradient(135deg, #0d9488 0%, #14b8a6 100%)",
-  primary: "#3b82f6",
-  primaryHover: "#2563eb",
-  textMuted: "#64748b",
-  textLight: "#94a3b8",
-  textDark: "#1e293b",
-  cardBg: "#f8fafc",
-  border: "#e2e8f0",
-  borderLight: "#f1f5f9",
-};
-
-// Menu items configuration
 const menuItems = [
   { text: "Dashboard", icon: <DashboardIcon />, path: "/" },
   { text: "Vehicles", icon: <DirectionsCarIcon />, path: "/vehicles" },

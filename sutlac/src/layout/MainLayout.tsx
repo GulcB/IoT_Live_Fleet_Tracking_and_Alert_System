@@ -2,10 +2,10 @@ import { useState } from "react";
 import { Outlet } from "react-router-dom";
 import { Box, useTheme, useMediaQuery } from "@mui/material";
 import Navbar from "./Navbar";
-import Sidebar, { SIDEBAR_WIDTH, NAVBAR_HEIGHT } from "./Sidebar";
+import Sidebar from "./Sidebar";
+import { LAYOUT } from "../theme/tokens";
 
-// Design constants
-const CONTENT_PADDING = { xs: 16, sm: 24, md: 32 };
+const { NAVBAR_HEIGHT, CONTENT_PADDING } = LAYOUT;
 
 const MainLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
