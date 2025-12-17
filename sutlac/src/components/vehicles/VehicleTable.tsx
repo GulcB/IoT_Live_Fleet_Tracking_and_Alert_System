@@ -11,7 +11,8 @@ import {
   IconButton,
   Chip,
 } from "@mui/material";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import type { Vehicle } from "../../types/vehicle";
@@ -164,17 +165,28 @@ const VehicleTable = ({ vehicles, onRowClick }: VehicleTableProps) => {
                 )}
               </TableCell>
               <TableCell>
-                <IconButton
-                  size="small"
-                  sx={{
-                    color:
-                      vehicle.active_alarms && vehicle.active_alarms > 0
-                        ? "#dc2626"
-                        : "#64748b",
-                  }}
-                >
-                  <ChevronRightIcon />
-                </IconButton>
+                <Box sx={{ display: "flex", gap: 0.5 }}>
+                  <IconButton
+                    size="small"
+                    sx={{ color: "#64748b" }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      // Handle edit
+                    }}
+                  >
+                    <EditIcon fontSize="small" />
+                  </IconButton>
+                  <IconButton
+                    size="small"
+                    sx={{ color: "#ef4444" }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      // Handle delete
+                    }}
+                  >
+                    <DeleteIcon fontSize="small" />
+                  </IconButton>
+                </Box>
               </TableCell>
             </TableRow>
           ))}

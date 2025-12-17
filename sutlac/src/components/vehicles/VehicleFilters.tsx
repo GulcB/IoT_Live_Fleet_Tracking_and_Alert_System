@@ -1,6 +1,4 @@
-import { Box, Tabs, Tab, Button } from "@mui/material";
-import FilterListIcon from "@mui/icons-material/FilterList";
-import FileDownloadIcon from "@mui/icons-material/FileDownload";
+import { Box, Tabs, Tab } from "@mui/material";
 import type { VehicleStatus } from "../../types/vehicle";
 
 type FilterTab = "all" | VehicleStatus | "with_alarms";
@@ -81,39 +79,6 @@ const VehicleFilters = ({
           />
         ))}
       </Tabs>
-
-      <Box sx={{ display: "flex", gap: 1 }}>
-        <Button
-          variant="outlined"
-          startIcon={<FilterListIcon />}
-          sx={{
-            textTransform: "none",
-            borderColor: "#e2e8f0",
-            color: "#64748b",
-            "&:hover": {
-              borderColor: "#cbd5e1",
-              backgroundColor: "#f8fafc",
-            },
-          }}
-        >
-          Filter
-        </Button>
-        <Button
-          variant="outlined"
-          startIcon={<FileDownloadIcon />}
-          sx={{
-            textTransform: "none",
-            borderColor: "#e2e8f0",
-            color: "#64748b",
-            "&:hover": {
-              borderColor: "#cbd5e1",
-              backgroundColor: "#f8fafc",
-            },
-          }}
-        >
-          Export
-        </Button>
-      </Box>
     </Box>
   );
 };

@@ -5,7 +5,6 @@ import {
   Button,
   Pagination,
   InputBase,
-  IconButton,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import SearchIcon from "@mui/icons-material/Search";
@@ -108,68 +107,6 @@ const Vehicles = () => {
             {totalVehicles} Total
           </Typography>
         </Box>
-
-        <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-          {/* Search */}
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              backgroundColor: "#f8fafc",
-              borderRadius: 2,
-              border: "1px solid #e2e8f0",
-              px: 2,
-              py: 0.75,
-              minWidth: { xs: 200, md: 280 },
-            }}
-          >
-            <SearchIcon sx={{ color: "#94a3b8", mr: 1 }} />
-            <InputBase
-              placeholder="Search by Plate, ID, or Driver..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              sx={{
-                flex: 1,
-                fontSize: "0.875rem",
-                "& ::placeholder": { color: "#94a3b8" },
-              }}
-            />
-          </Box>
-
-          {/* Notification bell placeholder */}
-          <IconButton sx={{ color: "#64748b" }}>
-            <Box
-              sx={{
-                width: 8,
-                height: 8,
-                borderRadius: "50%",
-                backgroundColor: "#fbbf24",
-                position: "absolute",
-                top: 8,
-                right: 8,
-              }}
-            />
-            🔔
-          </IconButton>
-
-          {/* Add Vehicle Button */}
-          <Button
-            variant="contained"
-            startIcon={<AddIcon />}
-            onClick={() => setModalOpen(true)}
-            sx={{
-              textTransform: "none",
-              backgroundColor: "#ef4444",
-              borderRadius: 2,
-              px: 2.5,
-              py: 1,
-              fontWeight: 500,
-              "&:hover": { backgroundColor: "#dc2626" },
-            }}
-          >
-            Add Vehicle
-          </Button>
-        </Box>
       </Box>
 
       {/* Stat Cards */}
@@ -213,6 +150,53 @@ const Vehicles = () => {
           icon={<WarningAmberIcon sx={{ color: "#f59e0b" }} />}
           iconBgColor="#fffbeb"
         />
+      </Box>
+
+      {/* Search Bar and Add Vehicle */}
+      <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            backgroundColor: "#f8fafc",
+            borderRadius: 2,
+            border: "1px solid #e2e8f0",
+            px: 2,
+            py: 0.75,
+            flex: 1,
+            maxWidth: 400,
+          }}
+        >
+          <SearchIcon sx={{ color: "#94a3b8", mr: 1 }} />
+          <InputBase
+            placeholder="Search by Plate, ID, or Driver..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            sx={{
+              flex: 1,
+              fontSize: "0.875rem",
+              "& ::placeholder": { color: "#94a3b8" },
+            }}
+          />
+        </Box>
+
+        <Button
+          variant="contained"
+          startIcon={<AddIcon />}
+          onClick={() => setModalOpen(true)}
+          sx={{
+            textTransform: "none",
+            backgroundColor: "#3b82f6",
+            borderRadius: 2,
+            px: 2.5,
+            py: 1,
+            fontWeight: 500,
+            "&:hover": { backgroundColor: "#2563eb" },
+            whiteSpace: "nowrap",
+          }}
+        >
+          Add Vehicle
+        </Button>
       </Box>
 
       {/* Filters */}
