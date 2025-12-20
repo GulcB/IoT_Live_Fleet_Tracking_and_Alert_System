@@ -16,4 +16,3 @@ COPY . .
 RUN pip install --no-cache-dir -r ./config/requirements.txt
 RUN chmod +x ./config/start.sh
 
-ENTRYPOINT [ "./config/start.sh" ]
